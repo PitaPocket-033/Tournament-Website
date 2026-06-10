@@ -8,7 +8,7 @@ const API_BASE_URL = (() => {
     return "http://localhost:3000";
   }
 
-  return "/.netlify/functions/api";
+  return "/api";
 })();
 const STORAGE_KEY = "tournamentSession";
 
@@ -63,7 +63,10 @@ async function apiFetch(path, options = {}) {
     : await response.text();
 
   if (!response.ok) {
-    throw new Error(data.error || "Request failed");
+    if (typeof data === "string" && data.trim()) {
+      throw new Error(data.trim());
+    }
+    throw new Error(data.error || `Request failed (${response.status})`);
   }
 
   return data;

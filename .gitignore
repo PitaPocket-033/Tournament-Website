@@ -27,3 +27,5 @@ Thumbs.db
 Desktop.ini
 .vscode/
 .idea/
+
+/generated/prisma

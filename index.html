@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tournament 2026</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right,#1e3c72,#2a5298);
+    color:white;
+}
+
+/* Header */
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 15px;
+    padding:8px 15px;
+    border-radius:20px;
+    transition:0.3s;
+}
+
+nav a:hover{
+    background:white;
+    color:#1e3c72;
+}
+
+/* Hero */
+.hero{
+    text-align:center;
+    padding:120px 20px;
+}
+
+.hero h1{
+    font-size:48px;
+}
+
+.hero button{
+    padding:12px 25px;
+    border:none;
+    border-radius:25px;
+    background:white;
+    color:#1e3c72;
+    cursor:pointer;
+    transition:0.3s;
+    font-size:16px;
+}
+
+.hero button:hover{
+    background:gold;
+    transform:scale(1.1);
+}
+
+/* About */
+.about{
+    background:white;
+    color:#333;
+    padding:50px;
+    text-align:center;
+}
+</style>
+
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+</head>
+<body>
+
+<header>
+<div class="logo">🏆 Tournament 2026</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="Schedule.html">Schedule</a>
+<a href="Players.html">Players</a>
+<a href="Contact.html">Contact</a>
+<a href="SignUp.html">Sign Up</a>
+<a href="Login.html">Login</a>
+<a href="Registration.html">Registration</a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>Welcome to the Annual Tournament</h1>
+<p>Feel the excitement of competition</p>
+<button onclick="location.href='Players.html'">Explore Players</button>
+</section>
+
+<section class="about">
+<h2>About Tournament</h2>
+<p>This tournament brings top players together for thrilling matches, ranked competition, live schedules, and team battles powered by a Node.js API backend.</p>
+
+<div class="home-stats">
+  <div><strong>9</strong><span>Elite Players</span></div>
+  <div><strong>4</strong><span>Tournaments</span></div>
+  <div><strong>4</strong><span>Teams</span></div>
+</div>
+
+<div class="home-actions">
+  <a href="Players.html">View Players</a>
+  <a href="Schedule.html">View Schedule</a>
+</div>
+</section>
+
+</body>
+</html>

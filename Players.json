@@ -1,0 +1,11 @@
+[
+  { "name": "Tenz", "rank": "Rank #1", "image": "Tenz.jpg", "game": "Valorant" },
+  { "name": "Ryley", "rank": "Rank #2", "image": "Ryley.jpg", "game": "Rocket League" },
+  { "name": "Retals", "rank": "Rank #3", "image": "retals.jpg", "game": "Rocket League" },
+  { "name": "Klaus", "rank": "Rank #4", "image": "Klaus.jpg", "game": "Valorant" },
+  { "name": "Ninja", "rank": "Rank #5", "image": "Ninja.jpg", "game": "Fortnite" },
+  { "name": "Feinberg", "rank": "Rank #6", "image": "Feinberg.jpg", "game": "Dota 2" },
+  { "name": "Faker", "rank": "Rank #7", "image": "Faker.jpg", "game": "League of Legends" },
+  { "name": "Shroud", "rank": "Rank #8", "image": "Shroud.jpg", "game": "Valorant" },
+  { "name": "Sumail", "rank": "Rank #9", "image": "Sumail.jpg", "game": "Dota 2" }
+]

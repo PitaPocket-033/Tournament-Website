@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tournament Registration</title>
+
+<style>
+    /* Borrowed from your index.html */
+    body{
+        margin:0;
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(to right,#1e3c72,#2a5298);
+        color:white;
+    }
+
+    header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:15px 40px;
+        background:rgba(0,0,0,0.6);
+    }
+
+    .logo{
+        font-size:22px;
+        font-weight:bold;
+    }
+
+    nav a{
+        color:white;
+        text-decoration:none;
+        margin:0 15px;
+        padding:8px 15px;
+        border-radius:20px;
+        transition:0.3s;
+    }
+
+    nav a:hover{
+        background:white;
+        color:#1e3c72;
+    }
+
+    /* Layout for Registration and List */
+    .container {
+        display: flex;
+        justify-content: space-around;
+        padding: 40px;
+        align-items: flex-start;
+    }
+
+    .box {
+        background: white;
+        color: black;
+        padding: 30px;
+        border-radius: 15px;
+        width: 40%;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+        text-align: center;
+        margin-top: 0;
+    }
+
+    /* Form Styles */
+    input {
+        width: 95%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        display: block;
+    }
+
+    .register-btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        background: #1e3c72;
+        color: white;
+        font-size: 16px;
+        transition: 0.3s;
+    }
+
+    .register-btn:hover {
+        background: gold;
+        color: #1e3c72;
+        transform: scale(1.02);
+    }
+
+    /* List Styles */
+    .participant-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f4f4f4;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        border-left: 5px solid #1e3c72;
+    }
+
+    .remove-btn {
+        background: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .remove-btn:hover {
+        background: #cc0000;
+    }
+
+    .error-msg {
+        color: red;
+        text-align: center;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+</style>
+
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">🏆 Tournament 2026</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="Schedule.html">Schedule</a>
+        <a href="Players.html">Players</a>
+        <a href="Registration.html">Register</a>
+        <a href="SignUp.html">Sign Up</a>
+        <a href="Login.html">Login</a>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="box">
+        <h2>Tournament Registration</h2>
+        <div id="errorMsg" class="error-msg"></div>
+        
+        <input type="text" id="playerName" placeholder="Player Name">
+        <input type="text" id="gameId" placeholder="Game ID">
+        <input type="text" id="teamName" placeholder="Team Name">
+        
+        <button class="register-btn" onclick="registerPlayer()">[Register]</button>
+    </div>
+
+    <div class="box">
+        <h2>Participants List</h2>
+        <p style="text-align: center; font-weight: bold;">
+            Total Registered: <span id="playerCount">0</span> / 10
+        </p>
+        <div id="participantsList"></div>
+    </div>
+</div>
+
+<script>
+    // 1. Load data from localStorage or create an empty array if nothing is saved yet
+    let participants = JSON.parse(localStorage.getItem("tournamentPlayers")) || [];
+
+    // Run the display function immediately to show saved players after a refresh
+    displayParticipants();
+
+    // 2. Function to add a new player
+    function registerPlayer() {
+        let name = document.getElementById("playerName").value;
+        let gameId = document.getElementById("gameId").value;
+        let team = document.getElementById("teamName").value;
+        let errorMsg = document.getElementById("errorMsg");
+
+        // Check the 10-player limit
+        if (participants.length >= 10) {
+            errorMsg.textContent = "Tournament is full! (Max 10 players)";
+            return;
+        }
+
+        // Basic validation so blank entries aren't added
+        if (name === "" || gameId === "" || team === "") {
+            errorMsg.textContent = "Please fill out all fields.";
+            return;
+        }
+
+        // Create the player object
+        let player = {
+            playerName: name,
+            gameID: gameId,
+            teamName: team
+        };
+
+        // Add to array
+        participants.push(player);
+
+        // Save to localStorage as a JSON string
+        localStorage.setItem("tournamentPlayers", JSON.stringify(participants));
+
+        // Clear the form inputs and error messages
+        document.getElementById("playerName").value = "";
+        document.getElementById("gameId").value = "";
+        document.getElementById("teamName").value = "";
+        errorMsg.textContent = "";
+
+        // Update the screen
+        displayParticipants();
+    }
+
+    // 3. Function to display players on the screen
+    function displayParticipants() {
+        let container = document.getElementById("participantsList");
+        let countDisplay = document.getElementById("playerCount");
+        
+        // Clear the current list HTML
+        container.innerHTML = "";
+        
+        // Update the counter
+        countDisplay.textContent = participants.length;
+
+        // Loop through the array and create HTML elements for each player
+        for (let i = 0; i < participants.length; i++) {
+            let div = document.createElement("div");
+            div.className = "participant-item";
+            
+            // Format how the player info looks
+            div.innerHTML = `
+                <div>
+                    <strong>${i + 1}. ${participants[i].playerName}</strong><br>
+                    <small>ID: ${participants[i].gameID} | Team: ${participants[i].teamName}</small>
+                </div>
+            `;
+
+            // Create a remove button
+            let removeBtn = document.createElement("button");
+            removeBtn.className = "remove-btn";
+            removeBtn.textContent = "Remove";
+            removeBtn.onclick = function() {
+                removePlayer(i);
+            };
+
+            // Add the button to the div, and the div to the container
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+        }
+    }
+
+    // 4. Function to delete a player
+    function removePlayer(index) {
+        // Remove 1 item at the specific index
+        participants.splice(index, 1);
+        
+        // Update localStorage with the new array
+        localStorage.setItem("tournamentPlayers", JSON.stringify(participants));
+        
+        // Update the screen and clear any "Full" error messages
+        document.getElementById("errorMsg").textContent = "";
+        displayParticipants();
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Contact</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(to right,#373b44,#4286f4);
+    color:white;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 10px;
+    padding:8px 15px;
+    border-radius:20px;
+    transition:0.3s;
+}
+
+nav a:hover{
+    background:white;
+    color:#4286f4;
+}
+
+h2{
+    text-align:center;
+    margin-top:30px;
+}
+
+form{
+    width:40%;
+    margin:40px auto;
+    background:white;
+    color:black;
+    padding:30px;
+    border-radius:15px;
+    display:flex;
+    flex-direction:column;
+}
+
+input,textarea{
+    margin-bottom:15px;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    padding:12px;
+    border:none;
+    border-radius:25px;
+    margin-top:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.submit{
+    background:#4286f4;
+    color:white;
+}
+
+.submit:hover{
+    background:green;
+    transform:scale(1.05);
+}
+
+.reset{
+    background:red;
+    color:white;
+}
+
+.reset:hover{
+    background:darkred;
+    transform:scale(1.05);
+}
+</style>
+
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+</head>
+<body>
+
+<header>
+<div>🏆 Tournament 2026</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="Schedule.html">Schedule</a>
+<a href="Players.html">Players</a>
+<a href="Contact.html">Contact</a>
+<a href="SignUp.html">Sign Up</a>
+<a href="Login.html">Login</a>
+</nav>
+</header>
+
+<h2>Contact Us</h2>
+
+<form>
+<input type="text" placeholder="Full Name" required>
+<input type="email" placeholder="Email" required>
+<label>Date of Birth:</label>
+<input type="date" required>
+<textarea placeholder="Your Message" required></textarea>
+
+<button type="submit" class="submit">Submit</button>
+<button type="reset" class="reset">Reset</button>
+</form>
+
+</body>
+</html>

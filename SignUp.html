@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign Up</title>
+
+<style>
+    body{
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+}
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 40px;
+    background:rgba(0, 0, 0, 0.6);
+}
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 10px;
+    padding:8px 15px;
+    border-radius:20px;
+    transition:0.3s;
+}
+
+nav a:hover{
+    background:white;
+    color:#243b55;
+}
+h2{
+    text-align:center;
+    margin-top:30px;
+}
+
+form{
+    width:40%;
+    margin:30px auto;
+    background:white;
+    color:black;
+    padding:30px;
+    border-radius:15px;
+    display:flex;
+    flex-direction:column;
+}
+
+input{
+    padding:10px;
+    margin-bottom:5px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+small{
+    color:red;
+    font-size:13px;
+    margin-bottom:10px;
+}
+.success{
+    color:green;
+}
+
+.strength{
+    height:8px;
+    border-radius:5px;
+    margin-bottom:10px;
+    background:#ddd;
+}
+
+#strengthBar{
+    height:100%;
+    width:0%;
+    border-radius:5px;
+    transition:0.3s;
+}
+
+button{
+    padding:12px;
+    border:none;
+    border-radius:25px;
+    margin-top:10px;
+    cursor:pointer;
+    background:#243b55;
+    color:white;
+    transition:0.3s;
+}
+
+button:hover{
+    background:green;
+    transform:scale(1.05);
+}
+
+#successMessage{
+    text-align:center;
+    margin-top:15px;
+    font-weight:bold;
+}
+</style>
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+</head>
+
+<body>
+
+<header>
+<div>🏆 Tournament 2026</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="SignUp.html">Sign Up</a>
+</nav>
+</header>
+
+<h2>Create Account</h2>
+
+<form id="signupForm">
+
+<input type="text" id="firstName" placeholder="First Name">
+<small id="firstNameError"></small>
+
+<input type="text" id="lastName" placeholder="Last Name">
+<small id="lastNameError"></small>
+
+<input type="number" id="age" placeholder="Age">
+<small id="ageError"></small>
+
+<input type="text" id="email" placeholder="Email Address">
+<small id="emailError"></small>
+
+<input type="password" id="password" placeholder="Password">
+<div class="strength"><div id="strengthBar"></div></div>
+<small id="passwordError"></small>
+
+<input type="password" id="confirmPassword" placeholder="Confirm Password">
+<small id="confirmPasswordError"></small>
+
+<button type="submit">Sign Up</button>
+
+<div id="successMessage"></div>
+
+</form>
+
+<script>
+
+// Get Elements
+const form = document.getElementById("signupForm");
+const firstName = document.getElementById("firstName");
+const lastName = document.getElementById("lastName");
+const age = document.getElementById("age");
+const email = document.getElementById("email");
+const password = document.getElementById("password");
+const confirmPassword = document.getElementById("confirmPassword");
+const strengthBar = document.getElementById("strengthBar");
+
+// Email Regex
+const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+
+// Password Regex
+const passwordPattern =
+/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!]).{8,}$/;
+
+
+// Live Email Validation
+email.addEventListener("input", function(){
+    if(emailPattern.test(email.value)){
+        emailError.textContent = "✔ Valid Email";
+        emailError.className = "success";
+    } else {
+        emailError.textContent = "✖ Invalid Email Format";
+        emailError.className = "";
+    }
+});
+
+// Password Strength Indicator
+password.addEventListener("input", function(){
+
+    let value = password.value;
+    let strength = 0;
+
+    if(value.length >= 8) strength++;
+    if(/[A-Z]/.test(value)) strength++;
+    if(/[a-z]/.test(value)) strength++;
+    if(/[0-9]/.test(value)) strength++;
+    if(/[@#$%^&*!]/.test(value)) strength++;
+
+    if(strength <=2){
+        strengthBar.style.width="33%";
+        strengthBar.style.background="red";
+    }
+    else if(strength <=4){
+        strengthBar.style.width="66%";
+        strengthBar.style.background="orange";
+    }
+    else{
+        strengthBar.style.width="100%";
+        strengthBar.style.background="green";
+    }
+});
+
+
+// Form Submit Validation
+form.addEventListener("submit", function(e){
+
+    e.preventDefault();
+    let valid = true;
+
+    // First Name
+    if(firstName.value === ""){
+        firstNameError.textContent="First Name is required";
+        valid=false;
+    } else firstNameError.textContent="";
+
+    // Last Name
+    if(lastName.value === ""){
+        lastNameError.textContent="Last Name is required";
+        valid=false;
+    } else lastNameError.textContent="";
+
+    // Age
+    if(age.value === ""){
+        ageError.textContent="Age is required";
+        valid=false;
+    } else ageError.textContent="";
+
+    // Email
+    if(!emailPattern.test(email.value)){
+        emailError.textContent="Invalid Email Format";
+        valid=false;
+    }
+
+    // Password
+    if(!passwordPattern.test(password.value)){
+        passwordError.textContent="Password not strong enough";
+        valid=false;
+    } else passwordError.textContent="";
+
+    // Confirm Password
+    if(password.value !== confirmPassword.value){
+        confirmPasswordError.textContent="Passwords do not match";
+        valid=false;
+    } else confirmPasswordError.textContent="";
+
+    if(valid){
+        document.getElementById("successMessage").textContent="🎉 Registration Successful!";
+        document.getElementById("successMessage").style.color="green";
+        form.reset();
+        strengthBar.style.width="0%";
+    }
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,4 +1,15 @@
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = (() => {
+  if (window.__API_BASE_URL__) {
+    return window.__API_BASE_URL__.replace(/\/$/, "");
+  }
+
+  const host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1") {
+    return "http://localhost:3000";
+  }
+
+  return "/.netlify/functions/api";
+})();
 const STORAGE_KEY = "tournamentSession";
 
 function getStoredSession() {

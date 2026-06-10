@@ -12,6 +12,21 @@
   --border:rgba(255,255,255,.18);
   --shadow:0 24px 70px rgba(0,0,0,.45);
 }
+[data-theme="gold"]{
+  --neon:#ffd166;
+  --pink:#ff7b54;
+  --gold:#ffe29a;
+}
+[data-theme="emerald"]{
+  --neon:#34d399;
+  --pink:#10b981;
+  --gold:#bbf7d0;
+}
+[data-theme="crimson"]{
+  --neon:#fb7185;
+  --pink:#f43f5e;
+  --gold:#fecdd3;
+}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
@@ -271,3 +286,97 @@ form,.box{border-radius:28px!important;width:min(520px,92%)!important}
   background:linear-gradient(90deg,var(--neon),var(--gold),var(--pink));
 }
 @media(max-width:640px){.home-stats{grid-template-columns:1fr}}
+
+.nav-user-status{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--muted);
+  font-size:14px;
+}
+.nav-user-status strong{color:var(--gold)}
+.nav-logout-btn{
+  padding:8px 14px;
+  border:none;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--pink),var(--gold));
+  color:#111;
+  font-weight:800;
+  cursor:pointer;
+}
+.site-footer{
+  width:min(1120px,92%);
+  margin:40px auto 24px;
+  padding:28px;
+  border-radius:28px;
+  background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.06));
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr;
+  gap:24px;
+}
+.site-footer h3,.site-footer h4{
+  margin-top:0;
+  color:white;
+}
+.site-footer p,.site-footer a{
+  color:var(--muted);
+  text-decoration:none;
+  display:block;
+  margin:8px 0;
+}
+.dashboard-grid{
+  width:min(1120px,92%);
+  margin:28px auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+}
+.dashboard-card,.panel-card,.map-card,.payment-card,.profile-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.15),rgba(255,255,255,.08));
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  border-radius:24px;
+  padding:22px;
+}
+.dashboard-card strong{
+  display:block;
+  font-size:34px;
+  color:var(--gold);
+}
+.page-shell{
+  width:min(1120px,92%);
+  margin:32px auto;
+}
+.split-layout{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:24px;
+}
+.stack{
+  display:grid;
+  gap:18px;
+}
+.map-frame{
+  width:100%;
+  min-height:320px;
+  border:none;
+  border-radius:20px;
+}
+.table-wrap{
+  overflow:auto;
+  border-radius:22px;
+}
+.action-row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.muted{color:var(--muted)}
+@media(max-width:860px){
+  .split-layout,.footer-grid{grid-template-columns:1fr}
+  .nav-user-status{width:100%;justify-content:center}
+}

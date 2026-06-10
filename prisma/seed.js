@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const { Pool } = require("pg");
+const bcrypt = require("bcryptjs");
 
 const rawConnectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
 
@@ -48,6 +49,31 @@ async function seed() {
 
   try {
     await client.query("BEGIN");
+
+    const adminPasswordHash = await bcrypt.hash("Admin123!", 10);
+    await client.query(
+      `
+        INSERT INTO "User" (first_name, last_name, age, email, password_hash, role, preferred_theme, bio)
+        VALUES ($1, $2, $3, $4, $5, 'ADMIN', 'gold', $6)
+        ON CONFLICT (email)
+        DO UPDATE SET
+          first_name = EXCLUDED.first_name,
+          last_name = EXCLUDED.last_name,
+          age = EXCLUDED.age,
+          password_hash = EXCLUDED.password_hash,
+          role = EXCLUDED.role,
+          preferred_theme = EXCLUDED.preferred_theme,
+          bio = EXCLUDED.bio
+      `,
+      [
+        "Tournament",
+        "Admin",
+        30,
+        "admin@tournament2026.com",
+        adminPasswordHash,
+        "Administrator account for the tournament control panel.",
+      ]
+    );
 
     for (const team of teams) {
       await client.query(

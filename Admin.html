@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+}
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+}
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 10px;
+    padding:8px 15px;
+    border-radius:20px;
+}
+table{width:100%}
+th,td{padding:10px;text-align:left}
+</style>
+</head>
+<body>
+<header>
+<div>🏆 Tournament 2026</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="Profile.html">Profile</a>
+<a href="Leaderboard.html">Leaderboard</a>
+</nav>
+</header>
+
+<section class="page-shell stack">
+    <div class="panel-card">
+        <h1>Admin Panel</h1>
+        <p class="muted">Protected CRUD panel for players, teams, and tournaments.</p>
+        <div id="adminMessage" class="muted"></div>
+    </div>
+
+    <div id="adminStats" class="dashboard-grid"></div>
+
+    <div class="split-layout">
+        <form id="playerForm" class="panel-card stack">
+            <h2>Manage Players</h2>
+            <input id="playerId" type="hidden">
+            <input id="playerName" placeholder="Name" required>
+            <input id="playerRank" placeholder="Rank #1" required>
+            <input id="playerImage" placeholder="JPG/Tenz.jpg" required>
+            <input id="playerGame" placeholder="Game" required>
+            <input id="playerScore" type="number" placeholder="Score" required>
+            <button type="submit">Save Player</button>
+            <div id="playerList" class="stack muted"></div>
+        </form>
+
+        <div class="stack">
+            <form id="teamForm" class="panel-card stack">
+                <h2>Manage Teams</h2>
+                <input id="teamId" type="hidden">
+                <input id="teamName" placeholder="Team Name" required>
+                <input id="teamGame" placeholder="Game" required>
+                <input id="teamCaptain" placeholder="Captain" required>
+                <button type="submit">Save Team</button>
+                <div id="teamList" class="stack muted"></div>
+            </form>
+
+            <form id="tournamentForm" class="panel-card stack">
+                <h2>Manage Tournaments</h2>
+                <input id="tournamentId" type="hidden">
+                <input id="tournamentTitle" placeholder="Title" required>
+                <input id="tournamentGame" placeholder="Game" required>
+                <input id="tournamentDate" type="datetime-local" required>
+                <input id="tournamentTime" placeholder="6:00 PM" required>
+                <input id="tournamentMax" type="number" value="10" required>
+                <button type="submit">Save Tournament</button>
+                <div id="tournamentList" class="stack muted"></div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script src="site.js"></script>
+<script src="Admin.js"></script>
+</body>
+</html>

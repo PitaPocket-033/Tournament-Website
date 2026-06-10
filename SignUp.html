@@ -150,6 +150,7 @@ const email = document.getElementById("email");
 const password = document.getElementById("password");
 const confirmPassword = document.getElementById("confirmPassword");
 const strengthBar = document.getElementById("strengthBar");
+const successMessage = document.getElementById("successMessage");
 
 // Email Regex
 const emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
@@ -198,7 +199,7 @@ password.addEventListener("input", function(){
 
 
 // Form Submit Validation
-form.addEventListener("submit", function(e){
+form.addEventListener("submit", async function(e){
 
     e.preventDefault();
     let valid = true;
@@ -239,16 +240,43 @@ form.addEventListener("submit", function(e){
         valid=false;
     } else confirmPasswordError.textContent="";
 
-    if(valid){
-        document.getElementById("successMessage").textContent="🎉 Registration Successful!";
-        document.getElementById("successMessage").style.color="green";
+    if(!valid) return;
+
+    try{
+        const data = await TournamentApp.apiFetch("/signup", {
+            method:"POST",
+            body: JSON.stringify({
+                firstName: firstName.value.trim(),
+                lastName: lastName.value.trim(),
+                age: Number(age.value),
+                email: email.value.trim(),
+                password: password.value
+            })
+        });
+
+        TournamentApp.saveSession({ token: data.token, user: data.user });
+        TournamentApp.applyTheme(data.user.preferredTheme);
+
+        successMessage.textContent="Registration successful. Your account is saved in the database.";
+        successMessage.style.color="green";
         form.reset();
         strengthBar.style.width="0%";
+        emailError.textContent="";
+        passwordError.textContent="";
+        confirmPasswordError.textContent="";
+        setTimeout(() => {
+            location.href = "Profile.html";
+        }, 900);
+    }
+    catch(error){
+        successMessage.textContent=error.message;
+        successMessage.style.color="red";
     }
 
 });
 
 </script>
 
+<script src="site.js"></script>
 </body>
 </html>

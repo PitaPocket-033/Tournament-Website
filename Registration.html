@@ -142,12 +142,14 @@
     <div class="box">
         <h2>Tournament Registration</h2>
         <div id="errorMsg" class="error-msg"></div>
+        <p style="text-align:center; color:#333; margin-top:-6px;">Registration fee: <strong>$25.00</strong>. Use the payment page for full checkout.</p>
         
         <input type="text" id="playerName" placeholder="Player Name">
         <input type="text" id="gameId" placeholder="Game ID">
         <input type="text" id="teamName" placeholder="Team Name">
-        
+
         <button class="register-btn" onclick="registerPlayer()">[Register]</button>
+        <p style="text-align:center; margin-top:14px;"><a href="Payment.html">Open Payment Gateway</a></p>
     </div>
 
     <div class="box">
@@ -160,105 +162,105 @@
 </div>
 
 <script>
-    // 1. Load data from localStorage or create an empty array if nothing is saved yet
-    let participants = JSON.parse(localStorage.getItem("tournamentPlayers")) || [];
+    let participants = [];
 
-    // Run the display function immediately to show saved players after a refresh
-    displayParticipants();
+    document.addEventListener("DOMContentLoaded", loadParticipants);
 
-    // 2. Function to add a new player
-    function registerPlayer() {
-        let name = document.getElementById("playerName").value;
-        let gameId = document.getElementById("gameId").value;
-        let team = document.getElementById("teamName").value;
-        let errorMsg = document.getElementById("errorMsg");
+    async function loadParticipants() {
+        const errorMsg = document.getElementById("errorMsg");
 
-        // Check the 10-player limit
-        if (participants.length >= 10) {
-            errorMsg.textContent = "Tournament is full! (Max 10 players)";
-            return;
+        try {
+            participants = await TournamentApp.apiFetch("/registrations");
+            errorMsg.textContent = "";
+            displayParticipants();
+        } catch (error) {
+            console.error(error);
+            errorMsg.textContent = "Could not load registrations. Please start the backend server.";
         }
+    }
 
-        // Basic validation so blank entries aren't added
+    async function registerPlayer() {
+        const name = document.getElementById("playerName").value.trim();
+        const gameId = document.getElementById("gameId").value.trim();
+        const team = document.getElementById("teamName").value.trim();
+        const errorMsg = document.getElementById("errorMsg");
+
         if (name === "" || gameId === "" || team === "") {
             errorMsg.textContent = "Please fill out all fields.";
             return;
         }
 
-        // Create the player object
-        let player = {
-            playerName: name,
-            gameID: gameId,
-            teamName: team
-        };
+        try {
+            await TournamentApp.apiFetch("/registrations", {
+                method: "POST",
+                body: JSON.stringify({
+                    playerName: name,
+                    gameId: gameId,
+                    teamName: team
+                })
+            });
 
-        // Add to array
-        participants.push(player);
+            document.getElementById("playerName").value = "";
+            document.getElementById("gameId").value = "";
+            document.getElementById("teamName").value = "";
+            errorMsg.textContent = "";
 
-        // Save to localStorage as a JSON string
-        localStorage.setItem("tournamentPlayers", JSON.stringify(participants));
-
-        // Clear the form inputs and error messages
-        document.getElementById("playerName").value = "";
-        document.getElementById("gameId").value = "";
-        document.getElementById("teamName").value = "";
-        errorMsg.textContent = "";
-
-        // Update the screen
-        displayParticipants();
+            await loadParticipants();
+        } catch (error) {
+            errorMsg.textContent = error.message;
+        }
     }
 
-    // 3. Function to display players on the screen
     function displayParticipants() {
-        let container = document.getElementById("participantsList");
-        let countDisplay = document.getElementById("playerCount");
-        
-        // Clear the current list HTML
+        const container = document.getElementById("participantsList");
+        const countDisplay = document.getElementById("playerCount");
+
         container.innerHTML = "";
-        
-        // Update the counter
         countDisplay.textContent = participants.length;
 
-        // Loop through the array and create HTML elements for each player
+        if (participants.length === 0) {
+            container.innerHTML = "<p style='text-align:center;'>No registrations yet.</p>";
+            return;
+        }
+
         for (let i = 0; i < participants.length; i++) {
-            let div = document.createElement("div");
+            const div = document.createElement("div");
             div.className = "participant-item";
-            
-            // Format how the player info looks
             div.innerHTML = `
                 <div>
                     <strong>${i + 1}. ${participants[i].playerName}</strong><br>
-                    <small>ID: ${participants[i].gameID} | Team: ${participants[i].teamName}</small>
+                    <small>ID: ${participants[i].gameId} | Team: ${participants[i].teamName}</small>
                 </div>
             `;
 
-            // Create a remove button
-            let removeBtn = document.createElement("button");
+            const removeBtn = document.createElement("button");
             removeBtn.className = "remove-btn";
             removeBtn.textContent = "Remove";
             removeBtn.onclick = function() {
-                removePlayer(i);
+                removePlayer(participants[i].id);
             };
 
-            // Add the button to the div, and the div to the container
             div.appendChild(removeBtn);
             container.appendChild(div);
         }
     }
 
-    // 4. Function to delete a player
-    function removePlayer(index) {
-        // Remove 1 item at the specific index
-        participants.splice(index, 1);
-        
-        // Update localStorage with the new array
-        localStorage.setItem("tournamentPlayers", JSON.stringify(participants));
-        
-        // Update the screen and clear any "Full" error messages
-        document.getElementById("errorMsg").textContent = "";
-        displayParticipants();
+    async function removePlayer(id) {
+        const errorMsg = document.getElementById("errorMsg");
+
+        try {
+            await TournamentApp.apiFetch(`/registrations/${id}`, {
+                method: "DELETE"
+            });
+
+            errorMsg.textContent = "";
+            await loadParticipants();
+        } catch (error) {
+            errorMsg.textContent = error.message;
+        }
     }
 </script>
 
+<script src="site.js"></script>
 </body>
 </html>

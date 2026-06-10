@@ -89,6 +89,12 @@ button:hover{
     background:green;
     transform:scale(1.05);
 }
+
+#loginMessage{
+    text-align:center;
+    margin-top:10px;
+    font-weight:bold;
+}
 </style>
 <link rel="stylesheet" href="CSS/awesome-theme.css">
 </head>
@@ -119,6 +125,8 @@ button:hover{
 
 <button type="submit">Login</button>
 
+<div id="loginMessage"></div>
+
 </form>
 
 <script>
@@ -127,6 +135,7 @@ const form = document.getElementById("loginForm");
 const email = document.getElementById("email");
 const password = document.getElementById("password");
 const toggle = document.getElementById("togglePassword");
+const loginMessage = document.getElementById("loginMessage");
 
 // Show/Hide Password Feature
 toggle.addEventListener("click", function(){
@@ -142,7 +151,7 @@ toggle.addEventListener("click", function(){
 });
 
 // Form Validation
-form.addEventListener("submit", function(e){
+form.addEventListener("submit", async function(e){
 
     e.preventDefault();  // Prevent default submission
 
@@ -164,16 +173,37 @@ form.addEventListener("submit", function(e){
         document.getElementById("passwordError").textContent = "";
     }
 
-    if(valid){
-        alert("Login Successful 🎉");
+    if(!valid) return;
+
+    try{
+        const data = await TournamentApp.apiFetch("/login", {
+            method:"POST",
+            body: JSON.stringify({
+                email: email.value.trim(),
+                password: password.value
+            })
+        });
+        TournamentApp.saveSession({ token: data.token, user: data.user });
+        TournamentApp.applyTheme(data.user.preferredTheme);
+
+        loginMessage.textContent = "Login successful. Account verified from the database.";
+        loginMessage.style.color = "green";
         form.reset();
         toggle.textContent = "🙈";
         password.type = "password";
+        setTimeout(() => {
+            location.href = data.user.role === "ADMIN" ? "Admin.html" : "Profile.html";
+        }, 900);
+    }
+    catch(error){
+        loginMessage.textContent = error.message;
+        loginMessage.style.color = "red";
     }
 
 });
 
 </script>
 
+<script src="site.js"></script>
 </body>
 </html>

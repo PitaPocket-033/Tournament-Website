@@ -1,5 +1,3 @@
-const API_BASE_URL = "http://localhost:3000";
-
 let playersData = [];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,13 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadPlayers() {
-  fetch(`${API_BASE_URL}/players`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Unable to fetch players from API");
-      }
-      return response.json();
-    })
+  TournamentApp.apiFetch("/players")
     .then(players => {
       playersData = players;
       displayPlayers(playersData);

@@ -1,18 +1,10 @@
-const API_BASE_URL = "http://localhost:3000";
-
 document.addEventListener("DOMContentLoaded", () => {
   loadTournaments();
   loadTeams();
 });
 
 function loadTournaments() {
-  fetch(`${API_BASE_URL}/tournaments`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Unable to fetch tournaments from API");
-      }
-      return response.json();
-    })
+  TournamentApp.apiFetch("/tournaments")
     .then(tournaments => {
       const tableBody = document.getElementById("tournamentBody");
       tableBody.innerHTML = "";
@@ -36,13 +28,7 @@ function loadTournaments() {
 }
 
 function loadTeams() {
-  fetch(`${API_BASE_URL}/teams`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Unable to fetch teams from API");
-      }
-      return response.json();
-    })
+  TournamentApp.apiFetch("/teams")
     .then(teams => {
       const teamContainer = document.getElementById("teamsContainer");
       teamContainer.innerHTML = "";

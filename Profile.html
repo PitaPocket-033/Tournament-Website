@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Profile</title>
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+}
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+}
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 10px;
+    padding:8px 15px;
+    border-radius:20px;
+}
+</style>
+</head>
+<body>
+<header>
+<div>🏆 Tournament 2026</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="Leaderboard.html">Leaderboard</a>
+<a href="Payment.html">Payments</a>
+</nav>
+</header>
+
+<section class="page-shell split-layout">
+    <div class="stack">
+        <div class="profile-card">
+            <h1>Your Profile</h1>
+            <p class="muted">Manage your account, session-backed login state, and saved theme.</p>
+            <div id="profileMessage" class="muted"></div>
+        </div>
+        <form id="profileForm" class="profile-card">
+            <input id="firstName" placeholder="First Name">
+            <input id="lastName" placeholder="Last Name">
+            <input id="age" type="number" placeholder="Age">
+            <textarea id="bio" placeholder="Short bio"></textarea>
+            <select id="preferredTheme">
+                <option value="cyan">Cyan</option>
+                <option value="gold">Gold</option>
+                <option value="emerald">Emerald</option>
+                <option value="crimson">Crimson</option>
+            </select>
+            <button type="submit">Save Profile</button>
+        </form>
+    </div>
+
+    <div class="stack">
+        <div class="profile-card">
+            <h2>Session</h2>
+            <p id="sessionStatus" class="muted">Checking session...</p>
+        </div>
+        <div class="profile-card">
+            <h2>Payment History</h2>
+            <div id="paymentHistory" class="muted">Loading payments...</div>
+        </div>
+    </div>
+</section>
+
+<script src="site.js"></script>
+<script src="Profile.js"></script>
+</body>
+</html>

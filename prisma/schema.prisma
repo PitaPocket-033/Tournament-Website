@@ -12,6 +12,17 @@ enum RegistrationStatus {
   CANCELLED
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
 model User {
   id            Int            @id @default(autoincrement())
   firstName     String         @map("first_name")
@@ -19,7 +30,12 @@ model User {
   age           Int
   email         String         @unique
   passwordHash  String         @map("password_hash")
+  role          UserRole       @default(USER)
+  preferredTheme String       @default("cyan") @map("preferred_theme")
+  bio           String? 
   registrations Registration[]
+  sessions      Session[]
+  payments      Payment[]
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
 }
@@ -83,8 +99,33 @@ model Registration {
   tournament   Tournament?        @relation(fields: [tournamentId], references: [id], onDelete: SetNull)
   createdAt    DateTime           @default(now()) @map("created_at")
   updatedAt    DateTime           @default(now()) @updatedAt @map("updated_at")
+  payment      Payment?
 
   @@index([tournamentId])
   @@index([teamId])
   @@index([userId])
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int      @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Payment {
+  id             Int           @id @default(autoincrement())
+  userId         Int?          @map("user_id")
+  registrationId Int?          @unique @map("registration_id")
+  amountCents    Int           @map("amount_cents")
+  currency       String        @default("USD")
+  status         PaymentStatus @default(PAID)
+  provider       String        @default("Demo Gateway")
+  reference      String        @unique
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @default(now()) @updatedAt @map("updated_at")
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  registration   Registration? @relation(fields: [registrationId], references: [id], onDelete: SetNull)
 }

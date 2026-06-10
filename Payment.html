@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Payments</title>
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+}
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+}
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 10px;
+    padding:8px 15px;
+    border-radius:20px;
+}
+</style>
+</head>
+<body>
+<header>
+<div>🏆 Tournament 2026</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="Registration.html">Registration</a>
+<a href="Profile.html">Profile</a>
+</nav>
+</header>
+
+<section class="page-shell split-layout">
+    <div class="stack">
+        <div class="payment-card">
+            <h1>Registration Checkout</h1>
+            <p class="muted">Demo payment gateway connected to the backend and database.</p>
+        </div>
+        <form id="paymentForm" class="payment-card">
+            <input id="playerName" placeholder="Player Name" required>
+            <input id="gameId" placeholder="Game ID" required>
+            <input id="teamName" placeholder="Team Name" required>
+            <select id="tournamentId"></select>
+            <button type="submit">Pay $25 and Register</button>
+            <div id="paymentMessage" class="muted"></div>
+        </form>
+    </div>
+
+    <div class="stack">
+        <div class="payment-card">
+            <h2>Gateway</h2>
+            <p class="muted">Provider: Demo Gateway</p>
+            <p class="muted">Fee: $25.00 per registration</p>
+            <p class="muted">Result: Stored in the database as a payment record</p>
+        </div>
+        <div class="payment-card">
+            <h2>Receipt</h2>
+            <div id="receiptArea" class="muted">No payment submitted yet.</div>
+        </div>
+    </div>
+</section>
+
+<script src="site.js"></script>
+<script src="Payment.js"></script>
+</body>
+</html>

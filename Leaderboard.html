@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Leaderboard</title>
+<link rel="stylesheet" href="CSS/awesome-theme.css">
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI', sans-serif;
+    background:linear-gradient(to right,#141e30,#243b55);
+    color:white;
+}
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+}
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:0 10px;
+    padding:8px 15px;
+    border-radius:20px;
+}
+.leaderboard-list{
+    display:grid;
+    gap:18px;
+}
+.leader-row{
+    display:grid;
+    grid-template-columns:90px 1.4fr 1fr 120px;
+    gap:18px;
+    align-items:center;
+}
+.leader-rank{
+    font-size:34px;
+    font-weight:900;
+    color:var(--gold);
+}
+.leader-score{
+    text-align:right;
+    font-weight:800;
+    color:var(--neon);
+}
+@media(max-width:700px){
+    .leader-row{grid-template-columns:1fr}
+    .leader-score{text-align:left}
+}
+</style>
+</head>
+<body>
+<header>
+<div>🏆 Tournament 2026</div>
+<nav>
+<a href="index.html">Home</a>
+<a href="Schedule.html">Schedule</a>
+<a href="Players.html">Players</a>
+<a href="Registration.html">Registration</a>
+</nav>
+</header>
+
+<section class="page-shell">
+    <div class="panel-card">
+        <h1>Leaderboard</h1>
+        <p class="muted">A dedicated dynamic leaderboard page powered by the database-backed API.</p>
+    </div>
+
+    <div id="leaderboardList" class="leaderboard-list stack" style="margin-top:22px;">
+        <div class="panel-card">Loading leaderboard...</div>
+    </div>
+</section>
+
+<script src="site.js"></script>
+<script src="Leaderboard.js"></script>
+</body>
+</html>

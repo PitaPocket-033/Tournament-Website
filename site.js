@@ -11,6 +11,7 @@ const API_BASE_URL = (() => {
   return "/api";
 })();
 const STORAGE_KEY = "tournamentSession";
+const CHAT_STORAGE_KEY = "tournamentChatHistory";
 
 function getStoredSession() {
   try {
@@ -26,6 +27,18 @@ function saveSession(session) {
 
 function clearSession() {
   localStorage.removeItem(STORAGE_KEY);
+}
+
+function getChatHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY)) || [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveChatHistory(history) {
+  localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(history.slice(-12)));
 }
 
 function getToken() {
@@ -188,6 +201,114 @@ function injectFooter() {
   document.body.appendChild(footer);
 }
 
+function renderChatMessages(container, history) {
+  container.innerHTML = "";
+
+  if (!history.length) {
+    const empty = document.createElement("div");
+    empty.className = "chat-empty-state";
+    empty.textContent = "Ask about players, schedule, registration, payments, or the website.";
+    container.appendChild(empty);
+    return;
+  }
+
+  history.forEach(item => {
+    const bubble = document.createElement("div");
+    bubble.className = `chat-message chat-${item.role}`;
+    bubble.textContent = item.content;
+    container.appendChild(bubble);
+  });
+
+  container.scrollTop = container.scrollHeight;
+}
+
+function injectChatbot() {
+  if (document.getElementById("chatWidget")) {
+    return;
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "chat-widget-shell";
+  wrapper.innerHTML = `
+    <button type="button" id="chatToggleBtn" class="chat-toggle-btn">Chat</button>
+    <section id="chatWidget" class="chat-widget chat-hidden" aria-label="Tournament assistant">
+      <div class="chat-header">
+        <div>
+          <strong>Tournament Assistant</strong>
+          <p>Ask anything about the website</p>
+        </div>
+        <button type="button" id="chatCloseBtn" class="chat-close-btn">×</button>
+      </div>
+      <div id="chatMessages" class="chat-messages"></div>
+      <form id="chatForm" class="chat-form">
+        <textarea id="chatInput" rows="2" placeholder="Ask about schedule, players, payments, or registration..." required></textarea>
+        <div class="chat-actions">
+          <button type="button" id="chatClearBtn" class="chat-clear-btn">Clear</button>
+          <button type="submit" id="chatSendBtn">Send</button>
+        </div>
+      </form>
+      <div id="chatStatus" class="chat-status"></div>
+    </section>
+  `;
+
+  document.body.appendChild(wrapper);
+
+  const widget = document.getElementById("chatWidget");
+  const messages = document.getElementById("chatMessages");
+  const status = document.getElementById("chatStatus");
+  const input = document.getElementById("chatInput");
+  const history = getChatHistory();
+
+  renderChatMessages(messages, history);
+
+  document.getElementById("chatToggleBtn")?.addEventListener("click", () => {
+    widget.classList.remove("chat-hidden");
+    input.focus();
+  });
+
+  document.getElementById("chatCloseBtn")?.addEventListener("click", () => {
+    widget.classList.add("chat-hidden");
+  });
+
+  document.getElementById("chatClearBtn")?.addEventListener("click", () => {
+    saveChatHistory([]);
+    renderChatMessages(messages, []);
+    status.textContent = "";
+  });
+
+  document.getElementById("chatForm")?.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const message = input.value.trim();
+    if (!message) return;
+
+    const nextHistory = getChatHistory().concat([{ role: "user", content: message }]);
+    saveChatHistory(nextHistory);
+    renderChatMessages(messages, nextHistory);
+    input.value = "";
+    status.textContent = "Assistant is thinking...";
+
+    try {
+      const data = await apiFetch("/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          message,
+          history: nextHistory,
+        }),
+      });
+
+      const updatedHistory = getChatHistory().concat([
+        { role: "assistant", content: data.reply },
+      ]);
+      saveChatHistory(updatedHistory);
+      renderChatMessages(messages, updatedHistory);
+      status.textContent = `Powered by ${data.model}`;
+    } catch (error) {
+      status.textContent = error.message;
+    }
+  });
+}
+
 async function initializeSite() {
   const session = getStoredSession();
   if (session?.user?.preferredTheme) {
@@ -199,6 +320,7 @@ async function initializeSite() {
   await hydrateSessionFromServer();
   enhanceNavigation();
   injectFooter();
+  injectChatbot();
 }
 
 window.TournamentApp = {

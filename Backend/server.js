@@ -11,6 +11,7 @@ const app = express();
 const PORT = Number(process.env.PORT || 3000);
 const SESSION_DAYS = 7;
 const REGISTRATION_FEE_CENTS = 2500;
+const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-5.5";
 
 app.use(
   cors({
@@ -200,6 +201,58 @@ function mapPayment(row) {
     reference: row.reference,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+  };
+}
+
+async function buildAssistantContext() {
+  const [players, tournaments, teams] = await Promise.all([
+    db.query(`
+      SELECT name, rank, game, score
+      FROM "Player"
+      ORDER BY score DESC, name ASC
+      LIMIT 8
+    `),
+    db.query(`
+      SELECT title, game, scheduled_at, time_label
+      FROM "Tournament"
+      ORDER BY scheduled_at ASC
+      LIMIT 6
+    `),
+    db.query(`
+      SELECT team_name, game, captain
+      FROM "Team"
+      ORDER BY team_name ASC
+      LIMIT 6
+    `),
+  ]);
+
+  return {
+    players: players.rows,
+    tournaments: tournaments.rows.map(row => ({
+      title: row.title,
+      game: row.game,
+      date: new Date(row.scheduled_at).toLocaleDateString("en-US", {
+        month: "long",
+        day: "2-digit",
+        year: "numeric",
+      }),
+      time: row.time_label,
+    })),
+    teams: teams.rows,
+    registrationFeeUsd: (REGISTRATION_FEE_CENTS / 100).toFixed(2),
+    supportedPages: [
+      "Home",
+      "Players",
+      "Schedule",
+      "Registration",
+      "Leaderboard",
+      "Profile",
+      "Payments",
+      "Admin",
+      "Contact",
+      "Sign Up",
+      "Login",
+    ],
   };
 }
 
@@ -781,6 +834,78 @@ app.post("/payments", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to process payment", details: error.message });
+  }
+});
+
+app.post("/chat", async (req, res) => {
+  const { message, history } = req.body || {};
+
+  if (!message || !String(message).trim()) {
+    return res.status(400).json({ error: "A message is required" });
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(503).json({
+      error: "Chatbot is not configured yet. Add OPENAI_API_KEY to your environment variables.",
+    });
+  }
+
+  try {
+    const authUser = await getSessionUser(req);
+    const context = await buildAssistantContext();
+    const safeHistory = Array.isArray(history)
+      ? history
+          .filter(item => item && (item.role === "user" || item.role === "assistant") && typeof item.content === "string")
+          .slice(-8)
+      : [];
+
+    const instructions = [
+      "You are the Tournament 2026 website assistant.",
+      "Answer questions about the website, players, teams, tournaments, registration, payment flow, profile, leaderboard, admin page, and contact/help.",
+      "Use the provided tournament data as the source of truth.",
+      "If asked about something unrelated to this tournament website, politely steer back to site support.",
+      "Keep answers concise, clear, and friendly.",
+      authUser
+        ? `The current signed-in user is ${authUser.first_name} ${authUser.last_name} (${authUser.email}).`
+        : "The visitor may be signed out.",
+      `Tournament website context: ${JSON.stringify(context)}`,
+    ].join(" ");
+
+    const input = safeHistory.concat([
+      { role: "user", content: String(message).trim() },
+    ]);
+
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: OPENAI_MODEL,
+        instructions,
+        input,
+        text: {
+          verbosity: "low",
+        },
+        store: false,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(500).json({
+        error: data?.error?.message || "OpenAI request failed",
+      });
+    }
+
+    res.json({
+      reply: data.output_text || "I couldn't generate a reply just now.",
+      model: OPENAI_MODEL,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to generate chat response", details: error.message });
   }
 });
 
